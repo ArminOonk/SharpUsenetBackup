@@ -1,0 +1,143 @@
+<!--------------------------------------------------------------------------->
+<!--                           INTRODUCTION                                
+
+ The Code Project article submission template (HTML version)
+
+Using this template will help us post your article sooner. To use, just 
+follow the 3 easy steps below:
+ 
+     1. Fill in the article description details
+     2. Add links to your images and downloads
+     3. Include the main article text
+
+That's all there is to it! All formatting will be done by our submission
+scripts and style sheets. 
+
+-->
+<!--------------------------------------------------------------------------->
+<!--                        IGNORE THIS SECTION                            -->
+<html>
+	<head>
+		<title>The Code Project</title>
+		<Style> BODY { FONT-SIZE: 10pt; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif }
+	P { FONT-SIZE: 10pt; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif }
+	TD { FONT-SIZE: 10pt; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif }
+	H2 { FONT-WEIGHT: bold; COLOR: #ff9900 }
+	H3 { FONT-WEIGHT: bold; COLOR: #ff9900 }
+	H4 { FONT-WEIGHT: bold; COLOR: #ff9900 }
+	H5 { FONT-WEIGHT: bold; COLOR: #ff9900 }
+	H2 { FONT-SIZE: 13pt }
+	H3 { FONT-SIZE: 12pt }
+	H4 { FONT-SIZE: 10pt; COLOR: black }
+	PRE { FONT-FAMILY: "Courier New", Courier, mono; WHITE-SPACE: pre; BACKGROUND-COLOR: #fbedbb }
+	CODE { COLOR: #990000; FONT-FAMILY: "Courier New", Courier, mono }
+	</Style>
+		<link rel="stylesheet" type="text/css" href="http://www.codeproject.com/styles/global.css">
+	</head>
+	<body bgcolor="#ffffff" color="#000000">
+		<!-------------------------------     STEP 2      --------------------------->
+		<!--  Include download and sample image information.                       -->
+		<ul class="download">
+			<li>
+				<a href="Article_demo.zip">Download&nbsp;sample code&nbsp;-&nbsp;3 Kb </a>
+			</li>
+		</ul>
+		<H2>Introduction</H2>
+		<p>
+			This is an implementation of the yEnc algorithm, as described at <A href="http://www.yenc.org/">
+				http://www.yenc.org/</A>
+		.&nbsp; yEnc is not an official standard, but it is nonetheless a very popular 
+		encoding method on binary newsgroups.&nbsp; As algorithms go, yEnc is very 
+		simple.&nbsp; It uses 8-bit characters to encode binary data.&nbsp; Since 
+		binary data is usually stored as 8-bit bytes, it does not have to accomplish 
+		too much :)&nbsp;
+		<P>
+		yEnc's popularity is due to the fact that it uses a full byte to encode the 
+		data, whereas other methods use only 7-bits.&nbsp; This makes messages encoded 
+		with yEnc smaller by a factor of 33-40%, according to the website.&nbsp; 
+		Smaller means quicker to upload and download, which is important when dealing 
+		with large binary files.&nbsp; It has additional benefits as well, in the form 
+		of an optional&nbsp;CRC32 check.
+		<P>My implementation is interesting from 2 points of view:
+			<OL>
+				<LI>
+				It is the only open-source one written in C#
+				<LI>
+					It is implemented as a cryptographic transform - more on that later</LI></OL>
+			<H2>Some Info on yEnc</H2>
+		<P>There are some peculiarities of newsgroup messages:
+			<UL>
+				<LI>
+				messages must be broken into lines, max around 1000 characters
+				<LI>
+					some characters have meaning, and as such need to be escaped out</LI></UL>
+		<P>The current yEnc algorithm escapes out CR, LF and the NULL character by 
+			default.&nbsp; However, individual encoders are free to escape other characters 
+			as they wish.&nbsp; Lines are broken at 128 characters, or 256 characters, by 
+			convention.&nbsp; Other line lengths are supported.</P>
+		<P>yEnc data begins with a =ybegin tag at the start of a line.&nbsp; The tag has 
+			additional attributes that specify the number of bytes to expect, as well as 
+			the name of the file and the length of the lines.&nbsp; Multipart messages are 
+			supported.&nbsp; The data ends with a line starting with =yend.&nbsp; The 
+			reason for the "=y" is that, due to the nature of the algorithm, it could never 
+			occur naturally as part of the data.</P>
+		<h2>Using the code</h2>
+		<P>My implementation of the algorithm deals purely with encoding and decoding the 
+			data, not parsing of messages, or even parsing of the yEnc headers and 
+			footers.&nbsp; To me, that is a separate challenge, which I'll leave to someone 
+			else.</P>
+		<P>Initially, I started coding the encoder&nbsp;as an implementation of <code>System.Text.Encoder</code>.&nbsp; 
+			However, I soon realized that, although I could read the data as text, I was 
+			really dealing with bytes.&nbsp; Probably, that should have been obvious to me 
+			from the beginning, but sometimes it takes a while :(&nbsp; Eventually, I 
+			decided it would&nbsp;work best as an implementation of <code>ICryptoTransform</code>.&nbsp; 
+			This is not to imply that it is a cryptographic algorithm, just that it 
+			transforms data in similar ways - the size of the input data does not 
+			necessarily match the size of the output data.&nbsp; Microsoft chose to 
+			implement the Base64 transformation objects in a similar way.</P>
+		<P>The benefit is that you can use the objects together with a <code>CryptoStream</code>
+			object, which is a fairly easy interface to use, and automatically adds support 
+			for streams.&nbsp; I'll stress again though, that <STRONG>this is not an encryption 
+				technique </STRONG>- I am just making use of existing Framework objects and 
+			interfaces to add power to my objects.&nbsp;</P>
+		<P>To encode some yEnc data, your code might look like this:</P>
+		<pre lang="c#">
+MemoryStream ms = new MemoryStream();  //this could be any stream we want to write to
+
+YEncEncoder encoder = new YEncEncoder();
+CryptoStream cs = new CryptoStream(ms, encoder, CryptoStreamMode.Write);
+StreamWriter w = new StreamWriter(cs);
+w.Write("Test string");
+
+//make sure everything is written out
+w.Flush();
+cs.Flush();
+</pre>
+		<P>
+			To decode it again, the code might continue:
+		</P>
+		<pre lang="c#">
+//reading back from the memorystream
+ms.Position = 0;		
+YEncDecoder decoder = new YEncDecoder();
+CryptoStream cs2 = new CryptoStream(ms, decoder, CryptoStreamMode.Read);
+StreamReader r = new StreamReader(cs2);
+string finalText = r.ReadToEnd();
+		</pre>
+		<P>This is pretty standard code that you might write if you were encrypting your 
+			data, the only difference being that we are using the <code>yEncEncoder</code> and
+			<code>yEncDecoder</code> instead of a system-supplied encryption algorithm.</P>
+		<H2>Points of Interest</H2>
+		<P>I have made use of Phil Bolduc's implementation of the CRC32 algorithm, found at <A href="http://www.codeproject.com/csharp/crc32_dotnet.asp">
+				http://www.codeproject.com/csharp/crc32_dotnet.asp</A>
+		.&nbsp; Unfortunately, there were some bugs in that that consumed a significant 
+		amount of my time.&nbsp; I had to make some modifications to make it work 
+		100%.&nbsp; Other than that, the code is an original work of my own, not based 
+		off of any other implementations.&nbsp; You are free to use it for whatever 
+		purpose you may desire, as long as you attribute it to me in the code comments.
+		<P>The dowloadable code includes a lot of NUnit tests, which test things to a point 
+			where I am comfortable that everything works.&nbsp; They should make the code 
+			easy to expand on for anyone who wants to add functionality.
+		</P>
+	</body>
+</html>
