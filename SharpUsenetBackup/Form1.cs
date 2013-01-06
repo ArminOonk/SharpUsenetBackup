@@ -35,6 +35,8 @@ namespace SharpUsenetBackup
 
         private Configuration conf = new Configuration();
 
+        private string newsgroups = string.Empty;
+
         public MainForm()
         {
             InitializeComponent();
@@ -77,17 +79,18 @@ namespace SharpUsenetBackup
             cancleButton.Enabled = false;
 
             //
-            //messageId = new List<string>();
             fileList = new List<UsenetFile>();
 
+            usenetServerBox.Text = conf.UsenetServer;
+            usenetUserBox.Text = conf.UsenetUser;
+            usenetPosterBox.Text = conf.UsenetPoster;
+
+            // Output the configuration
             SetOutText("Conf Nzb File: " + conf.NzbDir);
             SetOutText("Conf Usenet Server: " + conf.UsenetServer);
             SetOutText("Conf Usenet User: " + conf.UsenetUser);
             SetOutText("Conf Usenet Password: " + conf.UsenetPassword);
             SetOutText("Conf Usenet Poster: " + conf.UsenetPoster);
-
-            string timeString = String.Format("{0:MMddyy HHMMss}", DateTime.Now);
-            SetOutText("DateTime: " + timeString);
         }
 
         /// <summary>
@@ -155,6 +158,24 @@ namespace SharpUsenetBackup
             cancleUpload = false;
             // Check of de temp dir leeg is!
             cleanUpTemp();
+
+            // Create the newgroup list
+            newsgroups = string.Empty;
+            int itemsCheckedCnt = 0;
+            foreach (object itemChecked in newsgroupsCheckedListBox.Items)
+            {
+                if (newsgroupsCheckedListBox.GetItemCheckState(newsgroupsCheckedListBox.Items.IndexOf(itemChecked)) == CheckState.Checked)
+                {
+                    if(itemsCheckedCnt != 0)
+                        newsgroups += ",";
+
+                    newsgroups += itemChecked.ToString();
+
+                    itemsCheckedCnt++;
+                }
+            }
+
+            SetOutText("Newsgroups: " + newsgroups);
 
             uploadButton.Enabled = false;
             cancleButton.Enabled = true;
@@ -389,17 +410,17 @@ namespace SharpUsenetBackup
             cancleButton.Enabled = false;
         }
 
-        private void postFile(string fileName, string subject, params string[] groups)
+        private void postFile(string fileName, string subject)
         {
             int fileSize = 0;
+            if (newsgroups == string.Empty)
+            {
+                MessageBox.Show("No news groups selected!", "Error posting file", MessageBoxButtons.OK);
+                return;
+            }
+
             if(File.Exists(fileName))
             {
-                if (groups.Length == 0)
-                {
-                    MessageBox.Show("No newsgroups selected", "Error posting file", MessageBoxButtons.OK);
-                    return ;
-                }
-
                 Stream myStream = null;
                 string result = "";
                 
@@ -438,18 +459,15 @@ namespace SharpUsenetBackup
                     client.Connect(conf.UsenetServer);
                     client.AuthenticateUser(conf.UsenetUser, conf.UsenetPassword);
 
-                    string newsgroup = groups[0];
-                    for (int i = 1; i < groups.Length; i++)
-                        newsgroup += "," + groups[i];
+                    SetOutText("NewsGroups: " + newsgroups);
 
-                    SetOutText("NewsGroups: " + newsgroup);
-
-                    client.SelectNewsgroup(groups[0]);
+                    string[] newsgroupsExplode = newsgroups.Split(',');
+                    client.SelectNewsgroup(newsgroupsExplode[0]);
 
                     ArticleHeadersDictionary headers = new ArticleHeadersDictionary();
                     headers.AddHeader("From", conf.UsenetPoster);
                     headers.AddHeader("Subject", subject);
-                    headers.AddHeader("Newsgroups", newsgroup);
+                    headers.AddHeader("Newsgroups", newsgroups);
                     headers.AddHeader("Date", new NntpDateTime(DateTime.Now).ToString());
 
                     SetOutText("ResultList length: " + resultList.Count);
@@ -483,10 +501,10 @@ namespace SharpUsenetBackup
             
             int cnt = 0;
             string prefix = Guid.NewGuid().ToString();
-            string group = "alt.test.abcd";
+
             foreach (string t in tempPaths)
             {
-                fileList.Add(new UsenetFile(prefix + Path.GetFileName(t), group, "anon@anon"));
+                fileList.Add(new UsenetFile(prefix + Path.GetFileName(t), newsgroups, "anon@anon"));
                 yEncW.ProcessFile(tempDir, t);
 
                 string[] encPaths = Directory.GetFiles(yEncDir);
@@ -495,7 +513,7 @@ namespace SharpUsenetBackup
 
                 foreach (string f in encPaths)
                 {
-                    postFile(f, "\"" + Path.GetFileName(t)+ "\" yEnc " + "(" + partnum + "/" + numparts + ")", group);
+                    postFile(f, "\"" + Path.GetFileName(t)+ "\" yEnc " + "(" + partnum + "/" + numparts + ")");
                     File.Delete(f);
                     partnum++;
                 }
@@ -506,7 +524,7 @@ namespace SharpUsenetBackup
             NzbCreator nzb = new NzbCreator();
             nzb.Title = "Dit is de Titel";
             nzb.Tag = "Dit is de tag";
-            nzb.Groups = group;
+            nzb.Groups = newsgroups;
             nzb.StartFile();
             foreach (UsenetFile u in fileList)
                 nzb.AppendFile(u);
@@ -520,6 +538,48 @@ namespace SharpUsenetBackup
         {
             sendingBar.Value = 100;
             SetOutText("Sending complete");
+        }
+
+        private void testButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (Rfc977NntpClientWithExtensions client = new Rfc977NntpClientWithExtensions())
+                {
+                    client.Connect(conf.UsenetServer);
+                    client.AuthenticateUser(conf.UsenetUser, conf.UsenetPassword);
+                    client.SelectNewsgroup("alt.test");
+                    foreach (string s in client.RetrieveHelp())
+                    {
+                        SetOutText(s);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error testing usenet", MessageBoxButtons.OK);
+                return;
+            }
+
+            MessageBox.Show("Usenet setting oke", "Testing usenet", MessageBoxButtons.OK);
+        }
+
+        private void saveButton_Click(object sender, EventArgs e)
+        {
+            conf.NzbDir = nzbBox.Text;
+
+            conf.UsenetServer = usenetServerBox.Text;
+            conf.UsenetUser = usenetUserBox.Text;
+            conf.UsenetPassword = usenetPassBox.Text;
+            conf.UsenetPoster = usenetPosterBox.Text;
+
+            conf.WriteConfiguration();
+        }
+
+        private void newsgroupsRemoveButton_Click(object sender, EventArgs e)
+        {
+            if(newsgroupsCheckedListBox.SelectedIndex >= 0)
+                newsgroupsCheckedListBox.Items.RemoveAt(newsgroupsCheckedListBox.SelectedIndex);
         }
     }
 }
