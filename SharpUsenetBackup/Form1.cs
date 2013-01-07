@@ -91,6 +91,19 @@ namespace SharpUsenetBackup
             SetOutText("Conf Usenet User: " + conf.UsenetUser);
             SetOutText("Conf Usenet Password: " + conf.UsenetPassword);
             SetOutText("Conf Usenet Poster: " + conf.UsenetPoster);
+
+            Fingerprint fp = new Fingerprint(sourceDir);
+            fp.CreateFingerprint();
+
+            /*foreach (KeyValuePair<string, string> pair in fp.fingerprint)
+                SetOutText("current: " + pair.Key + " " + pair.Value);
+
+            foreach (KeyValuePair<string, string> pair in fp.fingerprintStored)
+                SetOutText("stored: " + pair.Key + " " + pair.Value);*/
+
+            List<string> diff = fp.Difference();
+            foreach (string t in diff)
+                SetOutText("Diff: " + t);
         }
 
         /// <summary>
@@ -394,10 +407,10 @@ namespace SharpUsenetBackup
             {
                 DirectoryInfo directory = new DirectoryInfo(tempDir);
 
-                foreach (System.IO.FileInfo file in directory.GetFiles())
+                foreach (FileInfo file in directory.GetFiles())
                     file.Delete();
 
-                foreach (System.IO.DirectoryInfo subDirectory in directory.GetDirectories())
+                foreach (DirectoryInfo subDirectory in directory.GetDirectories())
                     subDirectory.Delete(true);
 
             }
