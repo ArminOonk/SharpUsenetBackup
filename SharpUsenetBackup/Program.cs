@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using TaskTrayApplication;
 
 namespace SharpUsenetBackup
 {
@@ -15,7 +16,7 @@ namespace SharpUsenetBackup
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            Application.Run(new TaskTrayApplicationContext());
         }
     }
 }
