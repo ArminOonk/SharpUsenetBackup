@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.sourceDirBox = new System.Windows.Forms.TextBox();
@@ -53,21 +54,21 @@
             this.nzbBox = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.usenetServerBox = new System.Windows.Forms.TextBox();
-            this.usenetUserBox = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.usenetPassBox = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.saveButton = new System.Windows.Forms.Button();
-            this.testButton = new System.Windows.Forms.Button();
             this.usenetPosterBox = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
+            this.testButton = new System.Windows.Forms.Button();
+            this.saveButton = new System.Windows.Forms.Button();
+            this.usenetPassBox = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.usenetUserBox = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.usenetServerBox = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.newgroupsAddButton = new System.Windows.Forms.Button();
-            this.newsgroupsRemoveButton = new System.Windows.Forms.Button();
             this.newsgroupsCheckedListBox = new System.Windows.Forms.CheckedListBox();
+            this.newsgroupsRemoveButton = new System.Windows.Forms.Button();
+            this.newgroupsAddButton = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -309,41 +310,45 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Usenet";
             // 
-            // label7
+            // usenetPosterBox
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(8, 23);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(38, 13);
-            this.label7.TabIndex = 0;
-            this.label7.Text = "Server";
-            // 
-            // usenetServerBox
-            // 
-            this.usenetServerBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.usenetPosterBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.usenetServerBox.Location = new System.Drawing.Point(52, 20);
-            this.usenetServerBox.Name = "usenetServerBox";
-            this.usenetServerBox.Size = new System.Drawing.Size(272, 20);
-            this.usenetServerBox.TabIndex = 1;
+            this.usenetPosterBox.Location = new System.Drawing.Point(51, 98);
+            this.usenetPosterBox.Name = "usenetPosterBox";
+            this.usenetPosterBox.Size = new System.Drawing.Size(272, 20);
+            this.usenetPosterBox.TabIndex = 9;
             // 
-            // usenetUserBox
+            // label12
             // 
-            this.usenetUserBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.usenetUserBox.Location = new System.Drawing.Point(51, 46);
-            this.usenetUserBox.Name = "usenetUserBox";
-            this.usenetUserBox.Size = new System.Drawing.Size(272, 20);
-            this.usenetUserBox.TabIndex = 3;
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(7, 101);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(37, 13);
+            this.label12.TabIndex = 8;
+            this.label12.Text = "Poster";
             // 
-            // label10
+            // testButton
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(7, 49);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(29, 13);
-            this.label10.TabIndex = 2;
-            this.label10.Text = "User";
+            this.testButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.testButton.Location = new System.Drawing.Point(167, 122);
+            this.testButton.Name = "testButton";
+            this.testButton.Size = new System.Drawing.Size(75, 23);
+            this.testButton.TabIndex = 7;
+            this.testButton.Text = "Test";
+            this.testButton.UseVisualStyleBackColor = true;
+            this.testButton.Click += new System.EventHandler(this.testButton_Click);
+            // 
+            // saveButton
+            // 
+            this.saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.saveButton.Location = new System.Drawing.Point(248, 122);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(75, 23);
+            this.saveButton.TabIndex = 6;
+            this.saveButton.Text = "Save";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
             // usenetPassBox
             // 
@@ -364,45 +369,41 @@
             this.label11.TabIndex = 4;
             this.label11.Text = "Pass";
             // 
-            // saveButton
+            // usenetUserBox
             // 
-            this.saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.saveButton.Location = new System.Drawing.Point(248, 122);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(75, 23);
-            this.saveButton.TabIndex = 6;
-            this.saveButton.Text = "Save";
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
-            // 
-            // testButton
-            // 
-            this.testButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.testButton.Location = new System.Drawing.Point(167, 122);
-            this.testButton.Name = "testButton";
-            this.testButton.Size = new System.Drawing.Size(75, 23);
-            this.testButton.TabIndex = 7;
-            this.testButton.Text = "Test";
-            this.testButton.UseVisualStyleBackColor = true;
-            this.testButton.Click += new System.EventHandler(this.testButton_Click);
-            // 
-            // usenetPosterBox
-            // 
-            this.usenetPosterBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.usenetUserBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.usenetPosterBox.Location = new System.Drawing.Point(51, 98);
-            this.usenetPosterBox.Name = "usenetPosterBox";
-            this.usenetPosterBox.Size = new System.Drawing.Size(272, 20);
-            this.usenetPosterBox.TabIndex = 9;
+            this.usenetUserBox.Location = new System.Drawing.Point(51, 46);
+            this.usenetUserBox.Name = "usenetUserBox";
+            this.usenetUserBox.Size = new System.Drawing.Size(272, 20);
+            this.usenetUserBox.TabIndex = 3;
             // 
-            // label12
+            // label10
             // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(7, 101);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(37, 13);
-            this.label12.TabIndex = 8;
-            this.label12.Text = "Poster";
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(7, 49);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(29, 13);
+            this.label10.TabIndex = 2;
+            this.label10.Text = "User";
+            // 
+            // usenetServerBox
+            // 
+            this.usenetServerBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.usenetServerBox.Location = new System.Drawing.Point(52, 20);
+            this.usenetServerBox.Name = "usenetServerBox";
+            this.usenetServerBox.Size = new System.Drawing.Size(272, 20);
+            this.usenetServerBox.TabIndex = 1;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(8, 23);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(38, 13);
+            this.label7.TabIndex = 0;
+            this.label7.Text = "Server";
             // 
             // groupBox2
             // 
@@ -431,15 +432,17 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Newsgroups";
             // 
-            // newgroupsAddButton
+            // newsgroupsCheckedListBox
             // 
-            this.newgroupsAddButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.newgroupsAddButton.Location = new System.Drawing.Point(219, 163);
-            this.newgroupsAddButton.Name = "newgroupsAddButton";
-            this.newgroupsAddButton.Size = new System.Drawing.Size(75, 23);
-            this.newgroupsAddButton.TabIndex = 1;
-            this.newgroupsAddButton.Text = "Add";
-            this.newgroupsAddButton.UseVisualStyleBackColor = true;
+            this.newsgroupsCheckedListBox.FormattingEnabled = true;
+            this.newsgroupsCheckedListBox.Items.AddRange(new object[] {
+            "alt.test.abcd",
+            "alt.test",
+            "alt.binaries.backup"});
+            this.newsgroupsCheckedListBox.Location = new System.Drawing.Point(7, 20);
+            this.newsgroupsCheckedListBox.Name = "newsgroupsCheckedListBox";
+            this.newsgroupsCheckedListBox.Size = new System.Drawing.Size(287, 139);
+            this.newsgroupsCheckedListBox.TabIndex = 3;
             // 
             // newsgroupsRemoveButton
             // 
@@ -452,17 +455,15 @@
             this.newsgroupsRemoveButton.UseVisualStyleBackColor = true;
             this.newsgroupsRemoveButton.Click += new System.EventHandler(this.newsgroupsRemoveButton_Click);
             // 
-            // newsgroupsCheckedListBox
+            // newgroupsAddButton
             // 
-            this.newsgroupsCheckedListBox.FormattingEnabled = true;
-            this.newsgroupsCheckedListBox.Items.AddRange(new object[] {
-            "alt.test.abcd",
-            "alt.test",
-            "alt.binaries.backup"});
-            this.newsgroupsCheckedListBox.Location = new System.Drawing.Point(7, 20);
-            this.newsgroupsCheckedListBox.Name = "newsgroupsCheckedListBox";
-            this.newsgroupsCheckedListBox.Size = new System.Drawing.Size(287, 139);
-            this.newsgroupsCheckedListBox.TabIndex = 3;
+            this.newgroupsAddButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.newgroupsAddButton.Location = new System.Drawing.Point(219, 163);
+            this.newgroupsAddButton.Name = "newgroupsAddButton";
+            this.newgroupsAddButton.Size = new System.Drawing.Size(75, 23);
+            this.newgroupsAddButton.TabIndex = 1;
+            this.newgroupsAddButton.Text = "Add";
+            this.newgroupsAddButton.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -488,6 +489,7 @@
             this.Controls.Add(this.sourceDirBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "Sharp Usenet Backup";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
